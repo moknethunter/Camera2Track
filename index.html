@@ -77,8 +77,8 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
   <div id="bottomBar">
     <button class="ctrlBtn zoom" id="zoomOutBtn" title="تصغير">−</button>
     <button class="ctrlBtn zoom" id="zoomInBtn" title="تكبير">+</button>
-    <button class="ctrlBtn" id="recenterBtn" title="إعادة مركز">⌖</button>
-    <button class="ctrlBtn" id="resetBtn" title="إلغاء">✕</button>
+    <button class="ctrlBtn" id="recenterBtn" title="إعادة ضبط">⌖</button>
+    <button class="ctrlBtn" id="resetBtn" title="إلغاء القفل">✕</button>
     <button class="ctrlBtn rec" id="recordBtn" title="تسجيل">●</button>
     <button class="ctrlBtn" id="switchBtn" title="تبديل">⟳</button>
   </div>
@@ -91,13 +91,9 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 (function(){
 'use strict';
 
-// ═══════════════════════════════════════════════
-//  الإعدادات
-// ═══════════════════════════════════════════════
 const CFG = {
   patchSize: 22, initRegion: 30,
   searchRadius: 22, coarseStep: 3, fineRadius: 3,
-  // بحث أوسع عند فقدان الهدف
   searchRadiusLost: 50, coarseStepLost: 6,
   scales: [0.6, 0.75, 0.9, 1.0, 1.15, 1.35, 1.6, 1.9],
   minScale: 0.5, maxScale: 2.2,
@@ -106,8 +102,6 @@ const CFG = {
   grayMaxDim: 480, frameIntervalMs: 25,
   templateUpdateEvery: 8,
   lostFramesToWarn: 20,
-  // القفل الدائم: لا يوجد انتهاء تلقائي
-  // عند الفقدان الكامل، نُظهر النص فقط
   doubleTapMs: 350, doubleTapRadiusPx: 90,
   tapMoveThreshold: 22, tapMaxDuration: 400,
   espInterval: 100,
@@ -117,9 +111,6 @@ const CFG = {
   hideGraceMs: 800
 };
 
-// ═══════════════════════════════════════════════
-//  DOM
-// ═══════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const video = $('video'), canvas = $('overlay'), ctx = canvas.getContext('2d', {alpha: true});
 const videoWrap = $('videoWrap'), wrap = $('wrap');
@@ -138,7 +129,6 @@ function setStatus(msg, duration) {
 }
 function showError(m) { err.style.display = 'block'; err.textContent = m; }
 function hideError() { err.style.display = 'none'; }
-
 function addLog(text, isError) {
   if (!logBox) return;
   const line = document.createElement('div');
@@ -152,9 +142,6 @@ function addLog(text, isError) {
   while (logBox.children.length > CFG.logMaxLines) logBox.removeChild(logBox.firstChild);
 }
 
-// ═══════════════════════════════════════════════
-//  الحالة
-// ═══════════════════════════════════════════════
 let stream = null, running = false, facing = 'environment';
 let lastFrame = 0, fpsN = 0, fpsT = performance.now(), fps = 0;
 let rafId = 0, frameCount = 0;
@@ -172,13 +159,8 @@ const scratchRegion = new Uint8Array(CFG.patchSize * CFG.patchSize);
 const recCanvas = document.createElement('canvas');
 const recCtx = recCanvas.getContext('2d');
 
-// ═══════════════════════════════════════════════
-//  إصبعان للتكبير
-// ═══════════════════════════════════════════════
 const pointers = new Map();
-let pinchStartDist = 0;
-let pinchStartZoom = 1;
-let isPinching = false;
+let pinchStartDist = 0, pinchStartZoom = 1, isPinching = false;
 
 function getTwoPointerDistance() {
   const pts = Array.from(pointers.values());
@@ -215,7 +197,6 @@ const espSender = {
     const now = performance.now();
     if (now - this.lastSend < CFG.espInterval) return;
     this.lastSend = now;
-    // حتى لو الهدف مفقود، نرسل آخر موضع معروف مع live=0
     if (!tracked) { this._fire(`http://${this.ip}/t?live=0`); return; }
     const vScaleX = (video.videoWidth || 640) / grayW;
     const vScaleY = (video.videoHeight || 480) / grayH;
@@ -232,7 +213,7 @@ const espSender = {
     this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=${liveFlag}`);
     this.sentCount++;
     if (this.sentCount <= 3 || this.sentCount % 20 === 0) {
-      addLog(`📡 x=${x} y=${y} w=${w} h=${h} live=${liveFlag}`);
+      addLog(`📡 x=${x} y=${y} w=${w} h=${h}`);
     }
   },
   stop() {
@@ -288,7 +269,7 @@ if (espSender.ip) $('espIP').value = espSender.ip;
 updateEspUI();
 
 // ═══════════════════════════════════════════════
-//  الأدوات — مُحدّثة لدعم الزوم بأمان
+//  الأدوات
 // ═══════════════════════════════════════════════
 function resize() {
   const r = wrap.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -309,7 +290,7 @@ function fit() {
   return { scale, ox: (r.width - vw * scale) / 2, oy: (r.height - vh * scale) / 2, vw, vh, w: r.width, h: r.height };
 }
 
-// ✅ صحيح: نستخدم rect الخاص بـ wrap (غير مُقاس) بدل canvas
+// ✅ شاشة → إحداثيات محلية (كانفس) — نزيل الزوم
 function screenToLocal(clientX, clientY) {
   const r = wrap.getBoundingClientRect();
   const W = r.width, H = r.height;
@@ -321,16 +302,10 @@ function localToVideo(lx, ly) {
   const f = fit();
   return [(lx - f.ox) / f.scale, (ly - f.oy) / f.scale];
 }
+// ✅ الفيديو → إحداثيات محلية (كانفس) — بدون زوم (الزوم يأتي من CSS على الحاوية)
 function videoToLocal(vx, vy) {
   const f = fit();
-  // إحداثيات محلية قبل الزوم
-  const lx = f.ox + vx * f.scale;
-  const ly = f.oy + vy * f.scale;
-  // إحداثيات على الشاشة بعد الزوم (من مركز wrap)
-  const W = f.w, H = f.h;
-  const sx = W/2 + (lx - W/2) * zoom;
-  const sy = H/2 + (ly - H/2) * zoom;
-  return [sx, sy];
+  return [f.ox + vx * f.scale, f.oy + vy * f.scale];
 }
 function videoToGray(x, y) {
   return [x * grayW / (video.videoWidth || 640), y * grayH / (video.videoHeight || 480)];
@@ -355,10 +330,6 @@ function grabGray() {
   grayData.set(img.data);
   return grayData;
 }
-
-// ═══════════════════════════════════════════════
-//  استخراج + SAD
-// ═══════════════════════════════════════════════
 function extractRegion(gray, cx, cy, regionSize, out) {
   const P = CFG.patchSize;
   const half = regionSize * 0.5;
@@ -388,7 +359,7 @@ function sad(a, b) {
 }
 
 // ═══════════════════════════════════════════════
-//  القفل / الإلغاء — إلغاء يدوي فقط
+//  القفل
 // ═══════════════════════════════════════════════
 function lockAt(clientX, clientY) {
   const [lx, ly] = screenToLocal(clientX, clientY);
@@ -413,7 +384,7 @@ function lockAt(clientX, clientY) {
   panel.style.display = 'block';
   logBox.style.display = 'flex';
   hud.textContent = '🎯 مقفل';
-  setStatus('✅ تم القفل — انقر ✕ لإنهائه', 2000);
+  setStatus('✅ تم القفل', 1500);
   addLog('🎯 قفل على كائن');
 }
 function unlock() {
@@ -429,7 +400,7 @@ function unlock() {
 }
 
 // ═══════════════════════════════════════════════
-//  التتبع — دائم، لا يفك تلقائيًا
+//  التتبع — دائم
 // ═══════════════════════════════════════════════
 function trackStep(now) {
   if (!tracked) return;
@@ -440,12 +411,9 @@ function trackStep(now) {
   const baseX = tracked.cx, baseY = tracked.cy, baseScale = tracked.scale;
   const regionBase = P * baseScale;
   let best = { sad: Infinity, x: baseX, y: baseY, scale: baseScale };
-
-  // ✅ عند الفقدان نوسع نطاق البحث
   const lost = tracked.lostCount > CFG.lostFramesToWarn;
   const R = lost ? CFG.searchRadiusLost : CFG.searchRadius;
   const step = lost ? CFG.coarseStepLost : CFG.coarseStep;
-
   for (let dy = -R; dy <= R; dy += step) {
     for (let dx = -R; dx <= R; dx += step) {
       extractRegion(gray, baseX + dx, baseY + dy, regionBase, scratchRegion);
@@ -469,7 +437,6 @@ function trackStep(now) {
     const s = sad(template, scratchRegion);
     if (s < best.sad * 0.92) { best.sad = s; best.scale = sc; }
   }
-
   if (best.sad < CFG.minSAD) {
     const a = CFG.posSmoothing;
     const newX = tracked.cx * (1 - a) + best.x * a;
@@ -493,7 +460,6 @@ function trackStep(now) {
       for (let i = 0; i < tpl.length; i++) tpl[i] = (tpl[i] * 7 + region[i]) >> 3;
     }
   } else {
-    // ❌ لا استدعاء لـ unlock() — القفل دائم
     tracked.lostCount++;
     tracked.cx += tracked.velocity[0];
     tracked.cy += tracked.velocity[1];
@@ -507,12 +473,15 @@ function trackStep(now) {
 }
 
 // ═══════════════════════════════════════════════
-//  اللمس: نقرة مزدوجة + pinch — كلاهما يعمل حتى بعد القفل
+//  اللمس — pinch + double-tap
 // ═══════════════════════════════════════════════
-function setZoom(z) {
+function setZoom(z, fromPinch) {
   const nz = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
   if (Math.abs(nz - zoom) < 0.001) return;
   zoom = nz;
+  // أثناء pinch: بدون transition (استجابة فورية)
+  if (fromPinch) videoWrap.style.transition = 'none';
+  else videoWrap.style.transition = 'transform .15s ease-out';
   videoWrap.style.transform = `scale(${zoom})`;
   zoomBadge.textContent = zoom.toFixed(2) + '×';
   zoomBadge.style.display = 'block';
@@ -524,9 +493,7 @@ canvas.addEventListener('pointerdown', e => {
   if (!running) return;
   try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
   pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
-
   if (pointers.size === 2) {
-    // بدء pinch — إلغاء أي نقرة جارية (لكن لا نُلغي القفل)
     isPinching = true;
     pinchStartDist = getTwoPointerDistance();
     pinchStartZoom = zoom;
@@ -543,7 +510,7 @@ canvas.addEventListener('pointermove', e => {
   if (isPinching && pointers.size === 2 && pinchStartDist > 0) {
     const d = getTwoPointerDistance();
     const factor = d / pinchStartDist;
-    setZoom(pinchStartZoom * factor);
+    setZoom(pinchStartZoom * factor, true);
   }
 });
 
@@ -552,6 +519,10 @@ function endPointer(e) {
   try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
 
   if (pointers.size < 2) {
+    if (isPinching) {
+      // انتهاء pinch — أعِد الـ transition
+      videoWrap.style.transition = 'transform .15s ease-out';
+    }
     isPinching = false;
     pinchStartDist = 0;
   }
@@ -565,7 +536,6 @@ function endPointer(e) {
     const now = performance.now();
     if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
         Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
-      // نقرة مزدوجة: إن كان هناك هدف → إلغاؤه؛ ثم قفل جديد
       if (tracked) unlock();
       lockAt(e.clientX, e.clientY);
       lastTap = null;
@@ -579,12 +549,11 @@ function endPointer(e) {
 canvas.addEventListener('pointerup', endPointer);
 canvas.addEventListener('pointercancel', endPointer);
 
-// ═══ أزرار الزوم (بديل/مكمل لـ pinch) ═══
-zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom * 1.25); });
-zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom / 1.25); });
+zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom * 1.25, false); });
+zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom / 1.25, false); });
 recenterBtn.addEventListener('click', e => {
   e.stopPropagation();
-  setZoom(1.0);
+  setZoom(1.0, false);
   addLog('⌖ إعادة ضبط الزوم');
 });
 
@@ -618,7 +587,7 @@ function startRecording() {
   recChunks = [];
   recorder.ondataavailable = ev => { if (ev.data && ev.data.size > 0) recChunks.push(ev.data); };
   recorder.onstop = () => {
-    if (recChunks.length === 0) { addLog('⚠ لا توجد بيانات فيديو', true); return; }
+    if (recChunks.length === 0) { addLog('⚠ لا توجد بيانات', true); return; }
     const blob = new Blob(recChunks, { type: mime || 'video/webm' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -740,7 +709,7 @@ function drawCenterMarker(cx, cy) {
   ctx.restore();
 }
 
-// ✅ الرسم يستخدم videoToLocal الذي يحسب الزوم
+// ✅ يستخدم videoToLocal بدون زوم (لأن الحاوية مضروبة بالزوم في CSS)
 function drawTracked() {
   const f = fit();
   const vScaleX = (video.videoWidth || 640) / grayW;
@@ -749,24 +718,17 @@ function drawTracked() {
     const regionPx = CFG.patchSize * tracked.scale;
     const vx = tracked.cx * vScaleX, vy = tracked.cy * vScaleY;
     const vw = regionPx * vScaleX, vh = regionPx * vScaleY;
-
-    // حوّل 4 زوايا فيديو → إحداثيات محلية
-    const [tlx, tly] = videoToLocal(vx - vw/2, vy - vh/2);
-    const [brx, bry] = videoToLocal(vx + vw/2, vy + vh/2);
-    const bx = tlx, by = tly;
-    const bw = brx - tlx, bh = bry - tly;
+    const [bx, by] = videoToLocal(vx - vw/2, vy - vh/2);
+    const [bx2, by2] = videoToLocal(vx + vw/2, vy + vh/2);
+    const bw = bx2 - bx, bh = by2 - by;
     const objCx = bx + bw/2, objCy = by + bh/2;
-
-    // مركز الشاشة (محلي = على الشاشة)
     const scx = f.w/2, scy = f.h/2;
-
     ctx.save();
     ctx.strokeStyle = 'rgba(255,235,59,.4)';
     ctx.lineWidth = 1.2; ctx.setLineDash([5, 5]);
     ctx.beginPath(); ctx.moveTo(scx, scy); ctx.lineTo(objCx, objCy); ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
-
     ctx.save();
     ctx.strokeStyle = tracked.live ? '#00ff88' : '#ffca28';
     ctx.lineWidth = 1.8;
@@ -783,24 +745,25 @@ function drawTracked() {
     ctx.moveTo(bx+cl, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+bh-cl);
     ctx.stroke();
     ctx.restore();
-
     const crossSize = Math.max(12, Math.min(bw, bh) * 0.18);
     drawCross(objCx, objCy, crossSize, tracked.live);
   }
   drawCenterMarker(f.w/2, f.h/2);
 }
+// ✅ drawPendingTap يقسم على zoom (لأن الإحداثيات على الشاشة)
 function drawPendingTap(now) {
   if (!lastTap) return;
   const age = now - lastTap.time;
   if (age > CFG.doubleTapMs) return;
   const r = canvas.getBoundingClientRect();
-  const x = lastTap.x - r.left, y = lastTap.y - r.top;
+  const x = (lastTap.x - r.left) / zoom;
+  const y = (lastTap.y - r.top) / zoom;
   const alpha = 1 - age / CFG.doubleTapMs;
   ctx.save();
   ctx.strokeStyle = `rgba(255,235,59,${alpha})`;
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(x, y, 12 + (1-alpha)*12, 0, Math.PI*2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2);
+  ctx.lineWidth = 2 / zoom;
+  ctx.beginPath(); ctx.arc(x, y, (12 + (1-alpha)*12) / zoom, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x, y, 3 / zoom, 0, Math.PI*2);
   ctx.fillStyle = `rgba(255,235,59,${alpha})`;
   ctx.fill();
   ctx.restore();
@@ -817,7 +780,6 @@ function updatePanel(now) {
   const vvx = tracked.velocity[0] * vScaleX;
   const vvy = tracked.velocity[1] * vScaleY;
   const speed = Math.hypot(vvx, vvy);
-  const zoomFactor = tracked.scale / (tracked.initRegionSize / CFG.patchSize);
   const age = now - tracked.lastSeen;
   let status = 'نشط', cls = 'good';
   if (!tracked.live) { status = 'مفقود'; cls = 'bad'; }
@@ -828,7 +790,6 @@ function updatePanel(now) {
     '<div class="row"><span class="k">x</span><span class="v">'+relX.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">y</span><span class="v">'+relY.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">w×h</span><span class="v">'+vw.toFixed(0)+'×'+vh.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">vx,vy</span><span class="v">'+vvx.toFixed(0)+','+vvy.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">سرعة</span><span class="v">'+speed.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">زوم</span><span class="v">'+zoom.toFixed(2)+'×</span></div>' +
     '<div class="row"><span class="k">SAD</span><span class="v">'+tracked.sad.toFixed(0)+'</span></div>' +
@@ -843,9 +804,6 @@ function render(now) {
   if (tracked) updatePanel(now);
 }
 
-// ═══════════════════════════════════════════════
-//  الحلقة
-// ═══════════════════════════════════════════════
 function loop() {
   if (!running) return;
   const now = performance.now();
@@ -865,9 +823,6 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
-// ═══════════════════════════════════════════════
-//  التشغيل
-// ═══════════════════════════════════════════════
 async function start() {
   startBtn.disabled = true;
   startBtn.textContent = 'جارٍ التشغيل…';
@@ -902,6 +857,7 @@ async function start() {
     hint.style.display = 'block';
     setTimeout(() => { if (!tracked) hint.style.display = 'none'; }, 6000);
     addLog('▶ تشغيل الكاميرا');
+    addLog('🔒 يعمل بدون إنترنت');
     loop();
   } catch (e) {
     showError('تعذر التشغيل: ' + (e.message || e) + '\n\nتأكد من:\n• السماح بالكاميرا\n• فتح الرابط عبر HTTPS');
@@ -942,18 +898,13 @@ startBtn.addEventListener('click', start);
 switchBtn.addEventListener('click', e => { e.stopPropagation(); switchCamera(); });
 resetBtn.addEventListener('click', e => { e.stopPropagation(); unlock(); });
 
-// ═══════════════════════════════════════════════
-//  إيقاف شامل عند الخروج
-// ═══════════════════════════════════════════════
 function stopAll() {
   if (running) {
     running = false;
     cancelAnimationFrame(rafId);
     rafId = 0;
   }
-  if (recording) {
-    try { stopRecording(); } catch(e) {}
-  }
+  if (recording) { try { stopRecording(); } catch(e) {} }
   if (stream) {
     try { stream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} }); } catch(e) {}
     stream = null;
@@ -978,7 +929,7 @@ function stopAll() {
   if ($('espBar')) $('espBar').style.display = 'none';
   if (logBox) logBox.style.display = 'none';
   if (panel) panel.style.display = 'none';
-  if (tracked) tracked = null;
+  tracked = null;
 }
 
 document.addEventListener('visibilitychange', () => {
