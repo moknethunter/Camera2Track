@@ -9,36 +9,32 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:#000;font-family:system-ui,sans-serif}
 #wrap{position:relative;overflow:hidden}
-#videoWrap{position:absolute;inset:0;transform-origin:center center;transition:transform .15s ease-out}
+#videoWrap{position:absolute;inset:0;transform-origin:center center;will-change:transform}
 #video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #overlay{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
-#hud,#fps{position:absolute;z-index:5;color:#00ff88;background:#0009;border:1px solid #00ff8844;border-radius:14px;font:600 11px monospace;padding:6px 9px;text-shadow:0 1px 3px #000}
+#hud,#fps{position:absolute;z-index:5;color:#00ff88;background:rgba(0,0,0,0.4);border:1px solid #00ff8844;border-radius:14px;font:600 11px monospace;padding:6px 9px;text-shadow:0 1px 3px #000;backdrop-filter:blur(6px)}
 #hud{top:10px;right:10px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #fps{top:10px;left:10px}
-#hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:#000c;border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6}
-#panel{position:absolute;z-index:5;right:8px;top:44%;transform:translateY(-50%);display:none;pointer-events:none;min-width:150px;max-width:175px;background:#000a;backdrop-filter:blur(6px);border:1px solid #00ff8855;border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 3px #000}
-#panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid #00ff8844;padding-bottom:4px;margin-bottom:4px;font-size:12px}
+#hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:rgba(0,0,0,0.6);border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6;backdrop-filter:blur(8px)}
+/* ═══ لوحة البيانات — شفافة ═══ */
+#panel{position:absolute;z-index:5;right:8px;top:44%;transform:translateY(-50%);display:none;pointer-events:none;min-width:148px;max-width:172px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,0.35);border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
+#panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid rgba(0,255,136,0.3);padding-bottom:4px;margin-bottom:4px;font-size:12px}
 .row{display:flex;justify-content:space-between;gap:8px}
-.k{color:#00ff8899}.v{color:#fff;font-weight:700}
+.k{color:rgba(0,255,136,0.7)}.v{color:#fff;font-weight:700}
 .good{color:#00ff88}.warn{color:#ffca28}.bad{color:#ff5252}
 button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #startBtn{position:absolute;z-index:8;bottom:28px;left:50%;transform:translateX(-50%);border-radius:28px;background:#00ff88;color:#00180d;padding:15px 26px;font-size:16px;box-shadow:0 5px 24px #00ff8844;white-space:nowrap}
 #startBtn:disabled{opacity:.7}
 /* أزرار سفلية */
 #bottomBar{position:absolute;z-index:7;bottom:14px;right:10px;display:none;gap:8px;flex-direction:row}
-.ctrlBtn{width:52px;height:52px;border-radius:26px;background:#001a10dd;border:1.5px solid #00ff8866;color:#00ff88;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:all .15s}
+.ctrlBtn{width:52px;height:52px;border-radius:26px;background:rgba(0,26,16,0.7);border:1.5px solid #00ff8866;color:#00ff88;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
 .ctrlBtn:active{transform:scale(.92)}
 .ctrlBtn.rec{background:#ff1744;border-color:#ff1744;color:#fff}
 .ctrlBtn.rec.on{animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #ff174488}50%{box-shadow:0 0 0 12px #ff174400}}
-/* أزرار التكبير */
-#zoomBar{position:absolute;z-index:7;right:10px;top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:6px;align-items:center}
-.zoomBtn{width:44px;height:44px;border-radius:22px;background:#001a10dd;border:1.5px solid #00ff8866;color:#00ff88;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
-.zoomBtn:active{transform:scale(.9)}
-#zoomLevel{background:#000a;border:1px solid #00ff8855;border-radius:12px;color:#00ff88;font:700 11px monospace;padding:5px 8px;min-width:44px;text-align:center}
 /* شريط ESP */
-#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:#0009;border:1px solid #00ff8844;border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(4px)}
-#espBar input{background:#001a10;border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
+#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,136,0.35);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(8px)}
+#espBar input{background:rgba(0,26,16,0.8);border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
 #espBar input:focus{border-color:#00ff88}
 #espBtn{background:#00ff88;color:#00180d;border-radius:8px;padding:5px 10px;font:700 10px system-ui}
 #espBtn.off{background:#444;color:#aaa}
@@ -47,18 +43,18 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #espDot.off{background:#ff5252}
 #espDot.mid{background:#ffca28}
 /* شريط الحالة */
-#statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:#000a;color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid #00ff8833;display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* سجل الرسائل */
+#statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid rgba(0,255,136,0.3);display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}
+/* سجل الرسائل — شفاف أيضًا */
 #logBox{position:absolute;z-index:5;bottom:80px;left:10px;right:120px;max-height:130px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
-.logLine{background:#000b;border:1px solid #00ff8833;border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000;animation:fadeIn .3s}
+.logLine{background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,0.9);backdrop-filter:blur(6px);animation:fadeIn .3s}
 .logLine.err{border-color:#ff5252;color:#ff7777}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-/* خطأ */
-#err{display:none;position:absolute;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:440px;background:#180000f2;border:1px solid #ff5252;border-radius:12px;padding:16px;color:#ff7777;font-size:13px;line-height:1.6;white-space:pre-wrap}
-/* مؤشر التسجيل */
+#err{display:none;position:absolute;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:440px;background:rgba(24,0,0,0.95);border:1px solid #ff5252;border-radius:12px;padding:16px;color:#ff7777;font-size:13px;line-height:1.6;white-space:pre-wrap}
 #recIndicator{position:absolute;z-index:9;top:10px;left:50%;transform:translateX(-50%);background:#ff1744;color:#fff;font:700 11px monospace;padding:6px 12px;border-radius:14px;display:none;align-items:center;gap:6px}
 #recIndicator::before{content:'';width:8px;height:8px;border-radius:4px;background:#fff;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* شارة الزوم */
+#zoomBadge{position:absolute;z-index:6;bottom:16px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:700 12px monospace;padding:6px 10px;border-radius:12px;border:1px solid rgba(0,255,136,0.3);display:none;backdrop-filter:blur(6px)}
 </style>
 </head>
 <body>
@@ -70,17 +66,12 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 
   <div id="hud">MokTrak Pro · جاهز</div>
   <div id="fps">-- fps</div>
+  <div id="zoomBadge">1.0×</div>
   <div id="statusBar"></div>
   <div id="recIndicator">● تسجيل <span id="recTime">00:00</span></div>
-  <div id="hint">👆 انقر مرتين على أي كائن لتتبعه</div>
+  <div id="hint">👆 انقر مرتين للقفل · استخدم إصبعين للتكبير</div>
   <div id="panel"></div>
   <div id="logBox"></div>
-
-  <div id="zoomBar">
-    <button class="zoomBtn" id="zoomIn">+</button>
-    <div id="zoomLevel">1.0×</div>
-    <button class="zoomBtn" id="zoomOut">−</button>
-  </div>
 
   <div id="espBar">
     <span id="espDot"></span>
@@ -118,9 +109,10 @@ const CFG = {
   doubleTapMs: 350, doubleTapRadiusPx: 90,
   tapMoveThreshold: 22, tapMaxDuration: 400,
   espInterval: 100,
-  zoomMin: 1.0, zoomMax: 4.0, zoomStep: 0.25,
+  zoomMin: 1.0, zoomMax: 5.0,
   recMaxDim: 720,
-  logMaxLines: 5
+  logMaxLines: 5,
+  hideGraceMs: 800   // تأخير قبل الإيقاف عند تصغير الصفحة
 };
 
 // ═══════════════════════════════════════════════
@@ -133,8 +125,7 @@ const hud = $('hud'), fpsEl = $('fps'), panel = $('panel');
 const startBtn = $('startBtn'), resetBtn = $('resetBtn'), switchBtn = $('switchBtn');
 const recordBtn = $('recordBtn'), hint = $('hint'), err = $('err');
 const statusBar = $('statusBar'), recIndicator = $('recIndicator'), recTime = $('recTime');
-const zoomInBtn = $('zoomIn'), zoomOutBtn = $('zoomOut'), zoomLevel = $('zoomLevel');
-const zoomBar = $('zoomBar'), bottomBar = $('bottomBar'), logBox = $('logBox');
+const bottomBar = $('bottomBar'), logBox = $('logBox'), zoomBadge = $('zoomBadge');
 
 function setStatus(msg, duration) {
   statusBar.textContent = msg;
@@ -145,7 +136,6 @@ function setStatus(msg, duration) {
 function showError(m) { err.style.display = 'block'; err.textContent = m; }
 function hideError() { err.style.display = 'none'; }
 
-// ═══ سجل الرسائل على الشاشة ═══
 function addLog(text, isError) {
   if (!logBox) return;
   const line = document.createElement('div');
@@ -169,6 +159,7 @@ let tracked = null;
 let lastTap = null, pointerStart = null;
 let zoom = 1.0;
 let recording = false, recorder = null, recChunks = [], recStartTime = 0, recTimer = 0;
+let hideTimer = null;
 
 const grayCanvas = document.createElement('canvas');
 const grayCtx = grayCanvas.getContext('2d', {willReadFrequently: true});
@@ -177,6 +168,20 @@ const scratchRegion = new Uint8Array(CFG.patchSize * CFG.patchSize);
 
 const recCanvas = document.createElement('canvas');
 const recCtx = recCanvas.getContext('2d');
+
+// ═══════════════════════════════════════════════
+//  إصبعان للتكبير
+// ═══════════════════════════════════════════════
+const pointers = new Map();
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let isPinching = false;
+
+function getTwoPointerDistance() {
+  const pts = Array.from(pointers.values());
+  if (pts.length < 2) return 0;
+  return Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+}
 
 // ═══════════════════════════════════════════════
 //  ESP8266
@@ -210,8 +215,7 @@ const espSender = {
     if (!tracked || !tracked.live) { this._fire(`http://${this.ip}/t?live=0`); return; }
     const vScaleX = (video.videoWidth || 640) / grayW;
     const vScaleY = (video.videoHeight || 480) / grayH;
-    const vcx = tracked.cx * vScaleX;
-    const vcy = tracked.cy * vScaleY;
+    const vcx = tracked.cx * vScaleX, vcy = tracked.cy * vScaleY;
     const vw = CFG.patchSize * tracked.scale * vScaleX;
     const vh = CFG.patchSize * tracked.scale * vScaleY;
     const x = Math.round(vcx - (video.videoWidth / 2));
@@ -220,9 +224,7 @@ const espSender = {
     const vx = Math.round(tracked.velocity[0] * vScaleX);
     const vy = Math.round(tracked.velocity[1] * vScaleY);
     const sp = Math.round(Math.hypot(vx, vy));
-    const url = `http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=1`;
-    this._fire(url);
-    // سجّل أول 3 رسائل، ثم كل 20
+    this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=1`);
     this.sentCount++;
     if (this.sentCount <= 3 || this.sentCount % 20 === 0) {
       addLog(`📡 x=${x} y=${y} w=${w} h=${h}`);
@@ -250,7 +252,6 @@ const espSender = {
     }, 400);
   }
 };
-
 function updateEspUI() {
   const dot = $('espDot'), btn = $('espBtn');
   if (!dot) return;
@@ -259,13 +260,12 @@ function updateEspUI() {
   btn.classList.toggle('off', !espSender.enabled);
   btn.textContent = espSender.enabled ? 'قطع' : 'ربط';
 }
-
 $('espBtn').addEventListener('click', e => {
   e.stopPropagation();
   const ip = $('espIP');
   if (espSender.enabled) {
     espSender.enabled = false; espSender.ok = false;
-    addLog('⏹ قطع الاتصال بـ ESP');
+    addLog('⏹ قطع الاتصال');
     espSender.stop();
     updateEspUI();
     return;
@@ -303,7 +303,6 @@ function fit() {
   const scale = Math.max(r.width / vw, r.height / vh);
   return { scale, ox: (r.width - vw * scale) / 2, oy: (r.height - vh * scale) / 2, vw, vh, w: r.width, h: r.height };
 }
-
 function screenToLocal(clientX, clientY) {
   const r = canvas.getBoundingClientRect();
   const w = r.width, h = r.height;
@@ -395,10 +394,9 @@ function lockAt(clientX, clientY) {
   panel.style.display = 'block';
   logBox.style.display = 'flex';
   hud.textContent = '🎯 مقفل';
-  setStatus('✅ تم القفل — التتبع نشط', 2000);
+  setStatus('✅ تم القفل', 1500);
   addLog('🎯 قفل على كائن');
 }
-
 function unlock() {
   if (!tracked) return;
   tracked = null;
@@ -423,7 +421,6 @@ function trackStep(now) {
   const regionBase = P * baseScale;
   let best = { sad: Infinity, x: baseX, y: baseY, scale: baseScale };
 
-  // بحث خشن
   const R = CFG.searchRadius, step = CFG.coarseStep;
   for (let dy = -R; dy <= R; dy += step) {
     for (let dx = -R; dx <= R; dx += step) {
@@ -432,7 +429,6 @@ function trackStep(now) {
       if (s < best.sad) { best.sad = s; best.x = baseX + dx; best.y = baseY + dy; best.scale = baseScale; }
     }
   }
-  // بحث دقيق
   const FR = CFG.fineRadius, cx0 = best.x, cy0 = best.y;
   for (let dy = -FR; dy <= FR; dy++) {
     for (let dx = -FR; dx <= FR; dx++) {
@@ -442,7 +438,6 @@ function trackStep(now) {
       if (s < best.sad) { best.sad = s; best.x = cx0 + dx; best.y = cy0 + dy; }
     }
   }
-  // بحث بالمقاييس
   for (let i = 0; i < CFG.scales.length; i++) {
     const sc = CFG.scales[i];
     if (Math.abs(sc - baseScale) < 0.04) continue;
@@ -485,43 +480,79 @@ function trackStep(now) {
 }
 
 // ═══════════════════════════════════════════════
-//  اللمس
-// ═══════════════════════════════════════════════
-canvas.addEventListener('pointerdown', e => {
-  if (!running) return;
-  pointerStart = { x: e.clientX, y: e.clientY, t: performance.now() };
-});
-canvas.addEventListener('pointerup', e => {
-  if (!running || !pointerStart) return;
-  const dx = e.clientX - pointerStart.x;
-  const dy = e.clientY - pointerStart.y;
-  const moved = Math.hypot(dx, dy);
-  const dt = performance.now() - pointerStart.t;
-  pointerStart = null;
-  if (moved > CFG.tapMoveThreshold || dt > CFG.tapMaxDuration) return;
-  const now = performance.now();
-  if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
-      Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
-    if (tracked) unlock();
-    lockAt(e.clientX, e.clientY);
-    lastTap = null;
-    return;
-  }
-  lastTap = { x: e.clientX, y: e.clientY, time: now };
-});
-
-// ═══════════════════════════════════════════════
-//  التكبير
+//  اللمس: نقرة مزدوجة + pinch
 // ═══════════════════════════════════════════════
 function setZoom(z) {
-  zoom = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
+  const nz = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
+  if (Math.abs(nz - zoom) < 0.001) return;
+  zoom = nz;
   videoWrap.style.transform = `scale(${zoom})`;
-  zoomLevel.textContent = zoom.toFixed(1) + '×';
-  addLog('🔍 زوم: ' + zoom.toFixed(1) + '×');
+  zoomBadge.textContent = zoom.toFixed(2) + '×';
+  zoomBadge.style.display = 'block';
+  clearTimeout(setZoom._t);
+  setZoom._t = setTimeout(() => { zoomBadge.style.display = 'none'; }, 1200);
 }
-zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom + CFG.zoomStep); });
-zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom - CFG.zoomStep); });
-zoomLevel.addEventListener('click', e => { e.stopPropagation(); setZoom(1.0); });
+
+canvas.addEventListener('pointerdown', e => {
+  if (!running) return;
+  e.preventDefault && e.preventDefault();
+  try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+  pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+
+  if (pointers.size === 2) {
+    // بدء pinch — إلغاء أي نقرة جارية
+    isPinching = true;
+    pinchStartDist = getTwoPointerDistance();
+    pinchStartZoom = zoom;
+    pointerStart = null;
+    lastTap = null;
+  } else if (pointers.size === 1) {
+    pointerStart = { x: e.clientX, y: e.clientY, t: performance.now() };
+  }
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (isPinching && pointers.size === 2 && pinchStartDist > 0) {
+    const d = getTwoPointerDistance();
+    const factor = d / pinchStartDist;
+    setZoom(pinchStartZoom * factor);
+  }
+});
+
+function endPointer(e) {
+  pointers.delete(e.pointerId);
+  try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+
+  if (pointers.size < 2) {
+    isPinching = false;
+    pinchStartDist = 0;
+  }
+  if (pointers.size === 0 && !isPinching && pointerStart) {
+    // نقرة
+    const dx = e.clientX - pointerStart.x;
+    const dy = e.clientY - pointerStart.y;
+    const moved = Math.hypot(dx, dy);
+    const dt = performance.now() - pointerStart.t;
+    const ps = pointerStart;
+    pointerStart = null;
+    if (moved > CFG.tapMoveThreshold || dt > CFG.tapMaxDuration) return;
+    const now = performance.now();
+    if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
+        Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
+      if (tracked) unlock();
+      lockAt(e.clientX, e.clientY);
+      lastTap = null;
+      return;
+    }
+    lastTap = { x: e.clientX, y: e.clientY, time: now };
+  } else if (pointers.size === 0) {
+    pointerStart = null;
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
 
 // ═══════════════════════════════════════════════
 //  التسجيل
@@ -553,6 +584,7 @@ function startRecording() {
   recChunks = [];
   recorder.ondataavailable = ev => { if (ev.data && ev.data.size > 0) recChunks.push(ev.data); };
   recorder.onstop = () => {
+    if (recChunks.length === 0) { addLog('⚠ لا توجد بيانات فيديو', true); return; }
     const blob = new Blob(recChunks, { type: mime || 'video/webm' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -619,7 +651,6 @@ function drawForRecording() {
       recCtx.stroke();
     }
   }
-  // علامة المركز الأصفر
   recCtx.strokeStyle = 'rgba(255,235,59,.9)';
   recCtx.lineWidth = 2;
   const mcx = CW/2, mcy = CH/2;
@@ -757,7 +788,7 @@ function updatePanel(now) {
     '<div class="row"><span class="k">سرعة</span><span class="v">'+speed.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">زوم الكائن</span><span class="v">'+zoomFactor.toFixed(2)+'×</span></div>' +
     '<div class="row"><span class="k">SAD</span><span class="v">'+tracked.sad.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">إرسال ESP</span><span class="v">'+(espSender.ok?'✅':'⏸')+'</span></div>';
+    '<div class="row"><span class="k">ESP</span><span class="v">'+(espSender.ok?'✅':'⏸')+'</span></div>';
   espSender.send();
 }
 function render(now) {
@@ -821,14 +852,13 @@ async function start() {
     running = true;
     startBtn.style.display = 'none';
     bottomBar.style.display = 'flex';
-    zoomBar.style.display = 'flex';
     $('espBar').style.display = 'flex';
     logBox.style.display = 'flex';
     hud.textContent = 'MokTrak Pro · جاهز';
     hint.style.display = 'block';
     setTimeout(() => { if (!tracked) hint.style.display = 'none'; }, 6000);
     addLog('▶ تشغيل الكاميرا');
-    addLog('🔒 نسخة تعمل بدون إنترنت');
+    addLog('🔒 يعمل بدون إنترنت');
     loop();
   } catch (e) {
     showError('تعذر التشغيل: ' + (e.message || e) + '\n\nتأكد من:\n• السماح بالكاميرا\n• فتح الرابط عبر HTTPS');
@@ -869,13 +899,69 @@ startBtn.addEventListener('click', start);
 switchBtn.addEventListener('click', e => { e.stopPropagation(); switchCamera(); });
 resetBtn.addEventListener('click', e => { e.stopPropagation(); unlock(); });
 
-window.addEventListener('pagehide', () => {
-  running = false;
-  cancelAnimationFrame(rafId);
-  if (stream) stream.getTracks().forEach(t => t.stop());
-  if (recording) stopRecording();
-  espSender.stop();
+// ═══════════════════════════════════════════════
+//  🛑 إيقاف شامل عند الخروج
+// ═══════════════════════════════════════════════
+function stopAll(reason) {
+  if (running) {
+    running = false;
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+  // إيقاف التسجيل أولًا
+  if (recording) {
+    try { stopRecording(); } catch(e) {}
+  }
+  // إيقاف كل المسارات
+  if (stream) {
+    try { stream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} }); } catch(e) {}
+    stream = null;
+  }
+  // إفراغ الفيديو
+  if (video) {
+    try { video.pause(); } catch(e) {}
+    try { video.srcObject = null; } catch(e) {}
+    try { video.load(); } catch(e) {}
+  }
+  // إبلاغ ESP
+  if (espSender.enabled && espSender.ip) {
+    try {
+      const img = new Image();
+      img.src = `http://${espSender.ip}/t?live=0&_=${Date.now()}`;
+    } catch(e) {}
+  }
+  // إعادة الزر
+  if (startBtn) {
+    startBtn.disabled = false;
+    startBtn.textContent = '▶ تشغيل الكاميرا';
+    startBtn.style.display = 'block';
+  }
+  if (bottomBar) bottomBar.style.display = 'none';
+  if ($('espBar')) $('espBar').style.display = 'none';
+  if (logBox) logBox.style.display = 'none';
+  if (panel) panel.style.display = 'none';
+  if (tracked) tracked = null;
+}
+
+// عند تصغير المتصفح / الخروج من التطبيق
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      if (document.hidden && running) {
+        addLog('⏸ الصفحة مخفية — إيقاف');
+        stopAll('hidden');
+      }
+    }, CFG.hideGraceMs);
+  } else {
+    clearTimeout(hideTimer);
+  }
 });
+
+// عند مغادرة الصفحة
+window.addEventListener('pagehide', () => stopAll('pagehide'));
+window.addEventListener('beforeunload', () => stopAll('beforeunload'));
+window.addEventListener('unload', () => stopAll('unload'));
 
 // Service Worker
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
