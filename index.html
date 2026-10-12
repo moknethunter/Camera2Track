@@ -16,7 +16,6 @@ html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:
 #hud{top:10px;right:10px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #fps{top:10px;left:10px}
 #hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:rgba(0,0,0,0.6);border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6;backdrop-filter:blur(8px)}
-/* ═══ لوحة البيانات — شفافة ═══ */
 #panel{position:absolute;z-index:5;right:8px;top:44%;transform:translateY(-50%);display:none;pointer-events:none;min-width:148px;max-width:172px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,0.35);border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
 #panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid rgba(0,255,136,0.3);padding-bottom:4px;margin-bottom:4px;font-size:12px}
 .row{display:flex;justify-content:space-between;gap:8px}
@@ -25,14 +24,13 @@ html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:
 button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #startBtn{position:absolute;z-index:8;bottom:28px;left:50%;transform:translateX(-50%);border-radius:28px;background:#00ff88;color:#00180d;padding:15px 26px;font-size:16px;box-shadow:0 5px 24px #00ff8844;white-space:nowrap}
 #startBtn:disabled{opacity:.7}
-/* أزرار سفلية */
 #bottomBar{position:absolute;z-index:7;bottom:14px;right:10px;display:none;gap:8px;flex-direction:row}
 .ctrlBtn{width:52px;height:52px;border-radius:26px;background:rgba(0,26,16,0.7);border:1.5px solid #00ff8866;color:#00ff88;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
 .ctrlBtn:active{transform:scale(.92)}
 .ctrlBtn.rec{background:#ff1744;border-color:#ff1744;color:#fff}
 .ctrlBtn.rec.on{animation:pulse 1s infinite}
+.ctrlBtn.zoom{background:rgba(0,30,20,0.85);font-size:22px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #ff174488}50%{box-shadow:0 0 0 12px #ff174400}}
-/* شريط ESP */
 #espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,136,0.35);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(8px)}
 #espBar input{background:rgba(0,26,16,0.8);border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
 #espBar input:focus{border-color:#00ff88}
@@ -42,9 +40,7 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #espDot.on{background:#00ff88;box-shadow:0 0 8px #00ff88}
 #espDot.off{background:#ff5252}
 #espDot.mid{background:#ffca28}
-/* شريط الحالة */
 #statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid rgba(0,255,136,0.3);display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}
-/* سجل الرسائل — شفاف أيضًا */
 #logBox{position:absolute;z-index:5;bottom:80px;left:10px;right:120px;max-height:130px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
 .logLine{background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,0.9);backdrop-filter:blur(6px);animation:fadeIn .3s}
 .logLine.err{border-color:#ff5252;color:#ff7777}
@@ -53,7 +49,6 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #recIndicator{position:absolute;z-index:9;top:10px;left:50%;transform:translateX(-50%);background:#ff1744;color:#fff;font:700 11px monospace;padding:6px 12px;border-radius:14px;display:none;align-items:center;gap:6px}
 #recIndicator::before{content:'';width:8px;height:8px;border-radius:4px;background:#fff;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-/* شارة الزوم */
 #zoomBadge{position:absolute;z-index:6;bottom:16px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:700 12px monospace;padding:6px 10px;border-radius:12px;border:1px solid rgba(0,255,136,0.3);display:none;backdrop-filter:blur(6px)}
 </style>
 </head>
@@ -69,7 +64,7 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
   <div id="zoomBadge">1.0×</div>
   <div id="statusBar"></div>
   <div id="recIndicator">● تسجيل <span id="recTime">00:00</span></div>
-  <div id="hint">👆 انقر مرتين للقفل · استخدم إصبعين للتكبير</div>
+  <div id="hint">👆 نقرة مزدوجة للقفل · إصبعان للتكبير</div>
   <div id="panel"></div>
   <div id="logBox"></div>
 
@@ -80,6 +75,9 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
   </div>
 
   <div id="bottomBar">
+    <button class="ctrlBtn zoom" id="zoomOutBtn" title="تصغير">−</button>
+    <button class="ctrlBtn zoom" id="zoomInBtn" title="تكبير">+</button>
+    <button class="ctrlBtn" id="recenterBtn" title="إعادة مركز">⌖</button>
     <button class="ctrlBtn" id="resetBtn" title="إلغاء">✕</button>
     <button class="ctrlBtn rec" id="recordBtn" title="تسجيل">●</button>
     <button class="ctrlBtn" id="switchBtn" title="تبديل">⟳</button>
@@ -99,20 +97,24 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 const CFG = {
   patchSize: 22, initRegion: 30,
   searchRadius: 22, coarseStep: 3, fineRadius: 3,
+  // بحث أوسع عند فقدان الهدف
+  searchRadiusLost: 50, coarseStepLost: 6,
   scales: [0.6, 0.75, 0.9, 1.0, 1.15, 1.35, 1.6, 1.9],
   minScale: 0.5, maxScale: 2.2,
   minSAD: 3200, bestSAD: 900,
   posSmoothing: 0.55, sizeSmoothing: 0.85,
   grayMaxDim: 480, frameIntervalMs: 25,
   templateUpdateEvery: 8,
-  lostFramesToWarn: 20, lostFramesToUnlock: 90,
+  lostFramesToWarn: 20,
+  // القفل الدائم: لا يوجد انتهاء تلقائي
+  // عند الفقدان الكامل، نُظهر النص فقط
   doubleTapMs: 350, doubleTapRadiusPx: 90,
   tapMoveThreshold: 22, tapMaxDuration: 400,
   espInterval: 100,
-  zoomMin: 1.0, zoomMax: 5.0,
+  zoomMin: 1.0, zoomMax: 6.0,
   recMaxDim: 720,
   logMaxLines: 5,
-  hideGraceMs: 800   // تأخير قبل الإيقاف عند تصغير الصفحة
+  hideGraceMs: 800
 };
 
 // ═══════════════════════════════════════════════
@@ -126,6 +128,7 @@ const startBtn = $('startBtn'), resetBtn = $('resetBtn'), switchBtn = $('switchB
 const recordBtn = $('recordBtn'), hint = $('hint'), err = $('err');
 const statusBar = $('statusBar'), recIndicator = $('recIndicator'), recTime = $('recTime');
 const bottomBar = $('bottomBar'), logBox = $('logBox'), zoomBadge = $('zoomBadge');
+const zoomInBtn = $('zoomInBtn'), zoomOutBtn = $('zoomOutBtn'), recenterBtn = $('recenterBtn');
 
 function setStatus(msg, duration) {
   statusBar.textContent = msg;
@@ -212,7 +215,8 @@ const espSender = {
     const now = performance.now();
     if (now - this.lastSend < CFG.espInterval) return;
     this.lastSend = now;
-    if (!tracked || !tracked.live) { this._fire(`http://${this.ip}/t?live=0`); return; }
+    // حتى لو الهدف مفقود، نرسل آخر موضع معروف مع live=0
+    if (!tracked) { this._fire(`http://${this.ip}/t?live=0`); return; }
     const vScaleX = (video.videoWidth || 640) / grayW;
     const vScaleY = (video.videoHeight || 480) / grayH;
     const vcx = tracked.cx * vScaleX, vcy = tracked.cy * vScaleY;
@@ -224,10 +228,11 @@ const espSender = {
     const vx = Math.round(tracked.velocity[0] * vScaleX);
     const vy = Math.round(tracked.velocity[1] * vScaleY);
     const sp = Math.round(Math.hypot(vx, vy));
-    this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=1`);
+    const liveFlag = tracked.live ? 1 : 0;
+    this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=${liveFlag}`);
     this.sentCount++;
     if (this.sentCount <= 3 || this.sentCount % 20 === 0) {
-      addLog(`📡 x=${x} y=${y} w=${w} h=${h}`);
+      addLog(`📡 x=${x} y=${y} w=${w} h=${h} live=${liveFlag}`);
     }
   },
   stop() {
@@ -283,7 +288,7 @@ if (espSender.ip) $('espIP').value = espSender.ip;
 updateEspUI();
 
 // ═══════════════════════════════════════════════
-//  الأدوات
+//  الأدوات — مُحدّثة لدعم الزوم بأمان
 // ═══════════════════════════════════════════════
 function resize() {
   const r = wrap.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -303,16 +308,29 @@ function fit() {
   const scale = Math.max(r.width / vw, r.height / vh);
   return { scale, ox: (r.width - vw * scale) / 2, oy: (r.height - vh * scale) / 2, vw, vh, w: r.width, h: r.height };
 }
+
+// ✅ صحيح: نستخدم rect الخاص بـ wrap (غير مُقاس) بدل canvas
 function screenToLocal(clientX, clientY) {
-  const r = canvas.getBoundingClientRect();
-  const w = r.width, h = r.height;
-  const lx = w/2 + (clientX - r.left - w/2) / zoom;
-  const ly = h/2 + (clientY - r.top  - h/2) / zoom;
+  const r = wrap.getBoundingClientRect();
+  const W = r.width, H = r.height;
+  const lx = W/2 + (clientX - r.left - W/2) / zoom;
+  const ly = H/2 + (clientY - r.top  - H/2) / zoom;
   return [lx, ly];
 }
 function localToVideo(lx, ly) {
   const f = fit();
   return [(lx - f.ox) / f.scale, (ly - f.oy) / f.scale];
+}
+function videoToLocal(vx, vy) {
+  const f = fit();
+  // إحداثيات محلية قبل الزوم
+  const lx = f.ox + vx * f.scale;
+  const ly = f.oy + vy * f.scale;
+  // إحداثيات على الشاشة بعد الزوم (من مركز wrap)
+  const W = f.w, H = f.h;
+  const sx = W/2 + (lx - W/2) * zoom;
+  const sy = H/2 + (ly - H/2) * zoom;
+  return [sx, sy];
 }
 function videoToGray(x, y) {
   return [x * grayW / (video.videoWidth || 640), y * grayH / (video.videoHeight || 480)];
@@ -370,7 +388,7 @@ function sad(a, b) {
 }
 
 // ═══════════════════════════════════════════════
-//  القفل / الإلغاء
+//  القفل / الإلغاء — إلغاء يدوي فقط
 // ═══════════════════════════════════════════════
 function lockAt(clientX, clientY) {
   const [lx, ly] = screenToLocal(clientX, clientY);
@@ -391,16 +409,18 @@ function lockAt(clientX, clientY) {
   };
   hint.style.display = 'none';
   resetBtn.style.display = 'flex';
+  recenterBtn.style.display = 'flex';
   panel.style.display = 'block';
   logBox.style.display = 'flex';
   hud.textContent = '🎯 مقفل';
-  setStatus('✅ تم القفل', 1500);
+  setStatus('✅ تم القفل — انقر ✕ لإنهائه', 2000);
   addLog('🎯 قفل على كائن');
 }
 function unlock() {
   if (!tracked) return;
   tracked = null;
   resetBtn.style.display = 'none';
+  recenterBtn.style.display = 'none';
   panel.style.display = 'none';
   hud.textContent = 'MokTrak Pro · جاهز';
   setStatus('إلغاء القفل', 1200);
@@ -409,7 +429,7 @@ function unlock() {
 }
 
 // ═══════════════════════════════════════════════
-//  التتبع
+//  التتبع — دائم، لا يفك تلقائيًا
 // ═══════════════════════════════════════════════
 function trackStep(now) {
   if (!tracked) return;
@@ -421,7 +441,11 @@ function trackStep(now) {
   const regionBase = P * baseScale;
   let best = { sad: Infinity, x: baseX, y: baseY, scale: baseScale };
 
-  const R = CFG.searchRadius, step = CFG.coarseStep;
+  // ✅ عند الفقدان نوسع نطاق البحث
+  const lost = tracked.lostCount > CFG.lostFramesToWarn;
+  const R = lost ? CFG.searchRadiusLost : CFG.searchRadius;
+  const step = lost ? CFG.coarseStepLost : CFG.coarseStep;
+
   for (let dy = -R; dy <= R; dy += step) {
     for (let dx = -R; dx <= R; dx += step) {
       extractRegion(gray, baseX + dx, baseY + dy, regionBase, scratchRegion);
@@ -469,18 +493,21 @@ function trackStep(now) {
       for (let i = 0; i < tpl.length; i++) tpl[i] = (tpl[i] * 7 + region[i]) >> 3;
     }
   } else {
+    // ❌ لا استدعاء لـ unlock() — القفل دائم
     tracked.lostCount++;
     tracked.cx += tracked.velocity[0];
     tracked.cy += tracked.velocity[1];
     tracked.velocity[0] *= 0.9;
     tracked.velocity[1] *= 0.9;
-    if (tracked.lostCount >= CFG.lostFramesToWarn) tracked.live = false;
-    if (tracked.lostCount >= CFG.lostFramesToUnlock) unlock();
+    if (tracked.lostCount >= CFG.lostFramesToWarn && tracked.live) {
+      tracked.live = false;
+      addLog('⚠ الهدف مفقود — القفل محفوظ');
+    }
   }
 }
 
 // ═══════════════════════════════════════════════
-//  اللمس: نقرة مزدوجة + pinch
+//  اللمس: نقرة مزدوجة + pinch — كلاهما يعمل حتى بعد القفل
 // ═══════════════════════════════════════════════
 function setZoom(z) {
   const nz = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
@@ -495,12 +522,11 @@ function setZoom(z) {
 
 canvas.addEventListener('pointerdown', e => {
   if (!running) return;
-  e.preventDefault && e.preventDefault();
   try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
   pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
 
   if (pointers.size === 2) {
-    // بدء pinch — إلغاء أي نقرة جارية
+    // بدء pinch — إلغاء أي نقرة جارية (لكن لا نُلغي القفل)
     isPinching = true;
     pinchStartDist = getTwoPointerDistance();
     pinchStartZoom = zoom;
@@ -530,17 +556,16 @@ function endPointer(e) {
     pinchStartDist = 0;
   }
   if (pointers.size === 0 && !isPinching && pointerStart) {
-    // نقرة
     const dx = e.clientX - pointerStart.x;
     const dy = e.clientY - pointerStart.y;
     const moved = Math.hypot(dx, dy);
     const dt = performance.now() - pointerStart.t;
-    const ps = pointerStart;
     pointerStart = null;
     if (moved > CFG.tapMoveThreshold || dt > CFG.tapMaxDuration) return;
     const now = performance.now();
     if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
         Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
+      // نقرة مزدوجة: إن كان هناك هدف → إلغاؤه؛ ثم قفل جديد
       if (tracked) unlock();
       lockAt(e.clientX, e.clientY);
       lastTap = null;
@@ -553,6 +578,15 @@ function endPointer(e) {
 }
 canvas.addEventListener('pointerup', endPointer);
 canvas.addEventListener('pointercancel', endPointer);
+
+// ═══ أزرار الزوم (بديل/مكمل لـ pinch) ═══
+zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom * 1.25); });
+zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom / 1.25); });
+recenterBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  setZoom(1.0);
+  addLog('⌖ إعادة ضبط الزوم');
+});
 
 // ═══════════════════════════════════════════════
 //  التسجيل
@@ -705,6 +739,8 @@ function drawCenterMarker(cx, cy) {
   ctx.beginPath(); ctx.arc(cx, cy, 1.5, 0, Math.PI*2); ctx.fill();
   ctx.restore();
 }
+
+// ✅ الرسم يستخدم videoToLocal الذي يحسب الزوم
 function drawTracked() {
   const f = fit();
   const vScaleX = (video.videoWidth || 640) / grayW;
@@ -713,33 +749,41 @@ function drawTracked() {
     const regionPx = CFG.patchSize * tracked.scale;
     const vx = tracked.cx * vScaleX, vy = tracked.cy * vScaleY;
     const vw = regionPx * vScaleX, vh = regionPx * vScaleY;
-    const tl_x = f.ox + (vx - vw/2) * f.scale;
-    const tl_y = f.oy + (vy - vh/2) * f.scale;
-    const bw = vw * f.scale, bh = vh * f.scale;
-    const objCx = tl_x + bw/2, objCy = tl_y + bh/2;
+
+    // حوّل 4 زوايا فيديو → إحداثيات محلية
+    const [tlx, tly] = videoToLocal(vx - vw/2, vy - vh/2);
+    const [brx, bry] = videoToLocal(vx + vw/2, vy + vh/2);
+    const bx = tlx, by = tly;
+    const bw = brx - tlx, bh = bry - tly;
+    const objCx = bx + bw/2, objCy = by + bh/2;
+
+    // مركز الشاشة (محلي = على الشاشة)
     const scx = f.w/2, scy = f.h/2;
+
     ctx.save();
     ctx.strokeStyle = 'rgba(255,235,59,.4)';
     ctx.lineWidth = 1.2; ctx.setLineDash([5, 5]);
     ctx.beginPath(); ctx.moveTo(scx, scy); ctx.lineTo(objCx, objCy); ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
+
     ctx.save();
     ctx.strokeStyle = tracked.live ? '#00ff88' : '#ffca28';
     ctx.lineWidth = 1.8;
     ctx.shadowColor = ctx.strokeStyle;
     ctx.shadowBlur = tracked.live ? 8 : 3;
-    ctx.strokeRect(tl_x, tl_y, bw, bh);
+    ctx.strokeRect(bx, by, bw, bh);
     ctx.shadowBlur = 0;
     const cl = Math.min(bw, bh) * 0.18;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.moveTo(tl_x, tl_y+cl); ctx.lineTo(tl_x, tl_y); ctx.lineTo(tl_x+cl, tl_y);
-    ctx.moveTo(tl_x+bw-cl, tl_y); ctx.lineTo(tl_x+bw, tl_y); ctx.lineTo(tl_x+bw, tl_y+cl);
-    ctx.moveTo(tl_x+bw, tl_y+bh-cl); ctx.lineTo(tl_x+bw, tl_y+bh); ctx.lineTo(tl_x+bw-cl, tl_y+bh);
-    ctx.moveTo(tl_x+cl, tl_y+bh); ctx.lineTo(tl_x, tl_y+bh); ctx.lineTo(tl_x, tl_y+bh-cl);
+    ctx.moveTo(bx, by+cl); ctx.lineTo(bx, by); ctx.lineTo(bx+cl, by);
+    ctx.moveTo(bx+bw-cl, by); ctx.lineTo(bx+bw, by); ctx.lineTo(bx+bw, by+cl);
+    ctx.moveTo(bx+bw, by+bh-cl); ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx+bw-cl, by+bh);
+    ctx.moveTo(bx+cl, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+bh-cl);
     ctx.stroke();
     ctx.restore();
+
     const crossSize = Math.max(12, Math.min(bw, bh) * 0.18);
     drawCross(objCx, objCy, crossSize, tracked.live);
   }
@@ -776,8 +820,8 @@ function updatePanel(now) {
   const zoomFactor = tracked.scale / (tracked.initRegionSize / CFG.patchSize);
   const age = now - tracked.lastSeen;
   let status = 'نشط', cls = 'good';
-  if (!tracked.live) { status = 'استعادة'; cls = 'warn'; }
-  if (age > 500) { status = 'مفقود'; cls = 'bad'; }
+  if (!tracked.live) { status = 'مفقود'; cls = 'bad'; }
+  else if (age > 300) { status = 'استعادة'; cls = 'warn'; }
   panel.innerHTML =
     '<div class="title">🎯 الهدف</div>' +
     '<div class="row"><span class="k">الحالة</span><span class="'+cls+'">'+status+'</span></div>' +
@@ -786,7 +830,7 @@ function updatePanel(now) {
     '<div class="row"><span class="k">w×h</span><span class="v">'+vw.toFixed(0)+'×'+vh.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">vx,vy</span><span class="v">'+vvx.toFixed(0)+','+vvy.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">سرعة</span><span class="v">'+speed.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">زوم الكائن</span><span class="v">'+zoomFactor.toFixed(2)+'×</span></div>' +
+    '<div class="row"><span class="k">زوم</span><span class="v">'+zoom.toFixed(2)+'×</span></div>' +
     '<div class="row"><span class="k">SAD</span><span class="v">'+tracked.sad.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">ESP</span><span class="v">'+(espSender.ok?'✅':'⏸')+'</span></div>';
   espSender.send();
@@ -858,7 +902,6 @@ async function start() {
     hint.style.display = 'block';
     setTimeout(() => { if (!tracked) hint.style.display = 'none'; }, 6000);
     addLog('▶ تشغيل الكاميرا');
-    addLog('🔒 يعمل بدون إنترنت');
     loop();
   } catch (e) {
     showError('تعذر التشغيل: ' + (e.message || e) + '\n\nتأكد من:\n• السماح بالكاميرا\n• فتح الرابط عبر HTTPS');
@@ -900,37 +943,32 @@ switchBtn.addEventListener('click', e => { e.stopPropagation(); switchCamera(); 
 resetBtn.addEventListener('click', e => { e.stopPropagation(); unlock(); });
 
 // ═══════════════════════════════════════════════
-//  🛑 إيقاف شامل عند الخروج
+//  إيقاف شامل عند الخروج
 // ═══════════════════════════════════════════════
-function stopAll(reason) {
+function stopAll() {
   if (running) {
     running = false;
     cancelAnimationFrame(rafId);
     rafId = 0;
   }
-  // إيقاف التسجيل أولًا
   if (recording) {
     try { stopRecording(); } catch(e) {}
   }
-  // إيقاف كل المسارات
   if (stream) {
     try { stream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} }); } catch(e) {}
     stream = null;
   }
-  // إفراغ الفيديو
   if (video) {
     try { video.pause(); } catch(e) {}
     try { video.srcObject = null; } catch(e) {}
     try { video.load(); } catch(e) {}
   }
-  // إبلاغ ESP
   if (espSender.enabled && espSender.ip) {
     try {
       const img = new Image();
       img.src = `http://${espSender.ip}/t?live=0&_=${Date.now()}`;
     } catch(e) {}
   }
-  // إعادة الزر
   if (startBtn) {
     startBtn.disabled = false;
     startBtn.textContent = '▶ تشغيل الكاميرا';
@@ -943,27 +981,23 @@ function stopAll(reason) {
   if (tracked) tracked = null;
 }
 
-// عند تصغير المتصفح / الخروج من التطبيق
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
       if (document.hidden && running) {
         addLog('⏸ الصفحة مخفية — إيقاف');
-        stopAll('hidden');
+        stopAll();
       }
     }, CFG.hideGraceMs);
   } else {
     clearTimeout(hideTimer);
   }
 });
+window.addEventListener('pagehide', () => stopAll());
+window.addEventListener('beforeunload', () => stopAll());
+window.addEventListener('unload', () => stopAll());
 
-// عند مغادرة الصفحة
-window.addEventListener('pagehide', () => stopAll('pagehide'));
-window.addEventListener('beforeunload', () => stopAll('beforeunload'));
-window.addEventListener('unload', () => stopAll('unload'));
-
-// Service Worker
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
